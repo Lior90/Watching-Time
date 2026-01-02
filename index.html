@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watching Time Tracker</title>
+    <meta name="description" content="Track your movie and TV show watching time with ease.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <h1>WatchTrack</h1>
+            </div>
+        </header>
+
+        <main>
+            <!-- Hero Stats Section -->
+            <div class="stats-grid">
+                <!-- Lior's Stats -->
+                <section class="stats-card">
+                    <h2>Lior's Watching Time</h2>
+                    <div class="time-display" id="total-time-lior">
+                        <span class="time-unit"><span class="number" id="days-lior">0</span><span
+                                class="label">Days</span></span>
+                        <span class="time-unit"><span class="number" id="hours-lior">0</span><span
+                                class="label">Hours</span></span>
+                        <span class="time-unit"><span class="number" id="minutes-lior">0</span><span
+                                class="label">Minutes</span></span>
+                    </div>
+                </section>
+
+                <!-- Ethan's Stats -->
+                <section class="stats-card">
+                    <h2>Ethan's Time</h2>
+                    <div class="time-display" id="total-time-ethan">
+                        <span class="time-unit"><span class="number" id="days-ethan">0</span><span
+                                class="label">Days</span></span>
+                        <span class="time-unit"><span class="number" id="hours-ethan">0</span><span
+                                class="label">Hours</span></span>
+                        <span class="time-unit"><span class="number" id="minutes-ethan">0</span><span
+                                class="label">Minutes</span></span>
+                    </div>
+                </section>
+            </div>
+
+            <div class="action-bar">
+                <button id="add-entry-btn" class="primary-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Log New Session
+                </button>
+            </div>
+
+            <!-- Add Entry Modal -->
+            <div id="entry-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Log Watching Session</h3>
+                        <button id="close-modal" class="icon-btn">&times;</button>
+                    </div>
+                    <form id="entry-form">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" placeholder="e.g. Inception, The Office S1E1" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="user">Who Watched?</label>
+                                <select id="user">
+                                    <option value="lior">Lior</option>
+                                    <option value="ethan">Ethan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="type">Type</label>
+                                <select id="type">
+                                    <option value="movie">Movie</option>
+                                    <option value="series">TV Series</option>
+                                    <option value="youtube">YouTube/Video</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="duration-hours">Hours</label>
+                                <input type="number" id="duration-hours" min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="duration-minutes">Minutes</label>
+                                <input type="number" id="duration-minutes" min="0" max="59" value="0">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Save Session</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent History Section -->
+            <section class="history-section">
+                <div class="section-header">
+                    <h3>Recent History</h3>
+                    <button id="clear-all-btn" class="text-btn danger">Clear All</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- History items will be injected here -->
+                    <div class="empty-state">
+                        <p>No watching history yet.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
