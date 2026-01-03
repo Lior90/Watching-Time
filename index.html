@@ -75,6 +75,19 @@
                     </div>
                     <form id="entry-form">
                         <div class="form-group">
+                            <label>Action</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="action" value="add" checked>
+                                    <span class="radio-custom">Add Time</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="action" value="subtract">
+                                    <span class="radio-custom">Subtract Time</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="title">Title</label>
                             <input type="text" id="title" placeholder="e.g. Inception, The Office S1E1" required>
                         </div>

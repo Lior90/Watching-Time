@@ -372,3 +372,58 @@ select:focus {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
+
+/* Radio Group Styles */
+.radio-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.radio-label {
+    position: relative;
+    cursor: pointer;
+    flex: 1;
+}
+
+.radio-label input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.radio-custom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.radio-label input:checked + .radio-custom {
+    background-color: var(--primary-color); /* Fallback if var not defined, but usually defined in :root. Wait, primary-color or text-primary? text-primary is #f8fafc. accent-color is #3b82f6. usage of primary-btn uses accent-color. I should use accent-color. */
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+/* Specific style for Subtract when checked */
+.radio-label input[value="subtract"]:checked + .radio-custom {
+    background-color: #ef4444; /* Red color for subtract */
+    border-color: #ef4444;
+}
+
+/* Negative History Item */
+.history-item.deduction {
+    border-left: 4px solid #ef4444;
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.history-item.deduction .item-duration {
+    color: #ef4444;
+    font-weight: 600;
+}
