@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // State
     let sessions = [];
+    let editingId = null; // Track which session is being edited
 
     // Initialize
     init();
@@ -59,6 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
         saveData();
     }
 
+    function updateSession(updatedSession) {
+        const index = sessions.findIndex(s => s.id === updatedSession.id);
+        if (index !== -1) {
+            sessions[index] = updatedSession;
+            saveData();
+        }
+    }
+
     function deleteSession(id) {
         sessions = sessions.filter(session => session.id !== id);
         saveData();
@@ -70,8 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             saveData();
         }
     }
-
-    // --- Logic ---
 
     // --- Logic ---
 
@@ -170,7 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             item.className = `history-item ${isDeduction ? 'deduction' : ''}`;
 
-            const typeLabel = session.type.charAt(0).toUpperCase() + session.type.slice(1);
+            // Helper for Capitalization
+            const typeLabel = session.type ? session.type.charAt(0).toUpperCase() + session.type.slice(1) : 'Unknown';
 
             // User Badge
             const userBadges = {
@@ -218,14 +226,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${typeLabel}</span>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="item-duration">${durationStr}</div>
-                    <button class="icon-btn delete-btn" data-id="${session.id}" aria-label="Delete">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="item-duration" style="margin-right: 8px;">${durationStr}</div>
+                    
+                    <button class="icon-btn edit-btn" data-id="${session.id}" aria-label="Edit" title="Edit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button class="icon-btn delete-btn" data-id="${session.id}" aria-label="Delete" title="Delete">
                         &times;
                     </button>
                 </div>
             `;
             historyListEl.appendChild(item);
+        });
+
+        // Add listeners
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.getAttribute('data-id');
+                openEditModal(id);
+            });
         });
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
@@ -236,14 +260,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function openEditModal(id) {
+        const session = sessions.find(s => s.id === id);
+        if (!session) return;
+
+        editingId = id;
+
+        // Populate fields
+        document.getElementById('title').value = session.title;
+        document.getElementById('user').value = session.user;
+        document.getElementById('type').value = session.type;
+        document.getElementById('date').value = session.date;
+
+        const h = session.durationHours;
+        const m = session.durationMinutes;
+
+        const isNegative = h < 0 || m < 0;
+
+        document.getElementById('duration-hours').value = Math.abs(h);
+        document.getElementById('duration-minutes').value = Math.abs(m);
+
+        // Set Action Radio
+        const radios = document.getElementsByName('action');
+        if (isNegative) {
+            document.querySelector('input[name="action"][value="subtract"]').checked = true;
+        } else {
+            document.querySelector('input[name="action"][value="add"]').checked = true;
+        }
+
+        // Update UI Text
+        document.querySelector('.modal-header h3').textContent = 'Edit Session';
+        document.querySelector('.submit-btn').textContent = 'Update Session';
+
+        entryModal.classList.remove('hidden');
+    }
+
     // --- Event Listeners ---
 
     function setupEventListeners() {
         addEntryBtn.addEventListener('click', () => {
+            // Reset State for New Entry
+            editingId = null;
+            document.querySelector('.modal-header h3').textContent = 'Log Watching Session';
+            document.querySelector('.submit-btn').textContent = 'Save Session';
+            entryForm.reset();
+
             document.getElementById('date').valueAsDate = new Date();
             // Reset radio to Add
-            const radios = document.getElementsByName('action');
-            if (radios.length > 0) radios[0].checked = true;
+            document.querySelector('input[name="action"][value="add"]').checked = true;
 
             entryModal.classList.remove('hidden');
         });
@@ -284,18 +348,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 minutes = Math.abs(minutes);
             }
 
-            const newSession = {
-                id: Date.now().toString(),
-                user,
-                title,
-                type,
-                date,
-                durationHours: hours,
-                durationMinutes: minutes,
-                createdAt: new Date().toISOString()
-            };
-
-            addSession(newSession);
+            if (editingId) {
+                // Update Existing
+                const updatedSession = {
+                    id: editingId,
+                    user,
+                    title,
+                    type,
+                    date,
+                    durationHours: hours,
+                    durationMinutes: minutes,
+                    createdAt: sessions.find(s => s.id === editingId).createdAt || new Date().toISOString()
+                };
+                updateSession(updatedSession);
+            } else {
+                // Create New
+                const newSession = {
+                    id: Date.now().toString(),
+                    user,
+                    title,
+                    type,
+                    date,
+                    durationHours: hours,
+                    durationMinutes: minutes,
+                    createdAt: new Date().toISOString()
+                };
+                addSession(newSession);
+            }
 
             entryForm.reset();
             entryModal.classList.add('hidden');
